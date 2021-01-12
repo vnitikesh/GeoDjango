@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Calculate Distance{% endblock title %}
+
+{% block content %}
+
+<div class = "modal fade" id = "techUsed" tabindex = "-1" aria-labelledby = "techModalLabel" aria-hidden = "true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Technology Used</h5>
+      </div>
+      <div class="modal-body">
+        <ol>
+          <li>Django</li>
+          <li>geopy module of python(pip install geopy)</li>
+          <li>geoip2(pip install geoip2)</li>
+          <li>folium module of python(pip install folium)</li>
+          <li>Database of maxmind.com(<a target = "_blank" href="https://www.maxmind.com">https://www.maxmind.com</a>)</li>
+          <li>Full screen API of javascript(requestFullscreen())(<span style = "color:red" onclick = "toggleFullScreen()">Cick me</span> or Double click anywhere except map to see the effect)</li>
+        </ol>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<center>
+<h1><u>Implementing the map using GeoDjango</u></h1>
+<div>
+<span id = "tech_used" onclick = "tech_used()" class = "text-primary">Click me</span> to know the technology used
+</div>
+</center>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Distance to {{ destination }} is:- </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {{ distance }} kms
+      </div>
+
+    </div>
+  </div>
+</div>
+<form action = "" method = "POST" autocomplete = "off">
+  {% csrf_token %}
+  {{ form | crispy }}
+  <br>
+  <center>
+    {% if form_data %}
+    <div class = "text-danger">
+    {{ form_data }}
+  </div>
+    {% endif %}
+  <button type = "submit" class = "btn btn-primary">Confirm</button>
+</center>
+</form>
+<hr>
+<div id = 'map' style = "border: 10px solid black;">
+{{ map | safe }}
+</div>
+<br>
+<hr>
+
+<br>
+This product includes GeoLite2 data created by MaxMind, available from
+<a href="https://www.maxmind.com">https://www.maxmind.com</a>
+{% if request.POST and distance is not None %}
+<script>
+
+  $(window).on('load', function(){
+    $('#exampleModal').modal('show')
+  })
+
+
+
+</script>
+{% endif %}
+
+<script>
+
+function getFullscreenElement(){
+  return document.fullscreenElement || document.webkitFullscreenElement
+         || document.mozFullscreenElement || document.msFullscreenElement;
+}
+
+document.addEventListener("dblclick", function(e) {
+
+    toggleFullScreen();
+
+
+}, false);
+
+function toggleFullScreen(){
+  if(getFullscreenElement()){
+
+    document.exitFullscreen();
+  }else{
+
+    document.getElementById('map').requestFullscreen().catch(console.log);
+  //(Get documentElement is used to get full document implementation)  document.documentElement.requestFullscreen().catch((console.log));
+
+  }
+}
+
+/*
+  function toggleFullScreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+  }
+*/
+
+</script>
+
+{% endblock %}
